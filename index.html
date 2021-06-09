@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <!-- Used for making it appear like an app, especially on mobile -->
+    <script src="jquery.js"></script>
+    <script src="dataGenerator.js"></script>
+    <title >Twiddler</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="body">
+    <header>
+      <h1 class="title" href="index.html">Twiddler</h1>
+      <button class="homeButton">Home</button>
+    </header>
+    <div class = "twitterFeed"></div>
+    <script>
+      $(document).ready(function (){
+        var $twitterFeed = $('.twitterFeed')
+        function retrieveTweet (username) {
+          $twitterFeed.empty();
+          var source;
+          if (username === undefined) {
+            source = streams.home;
+          } else {
+            source = streams.users[username];
+          }
+          var index = source.length - 1;
+          while(index >= 0){
+            var tweet = source[index];
+            var $tweetCont = $('<div class="tweetCont"></div>');
+            var $username = $('<div class="username"></div>');
+            var $message = $('<div class="message"></div>');
+            var $timestamp = $('<div class="timestamp"></div>');
+            $username.text('@' + tweet.user);
+            $message.text(tweet.message);
+            $timestamp.text('Twiddled ' + tweet.created_at)
+            $username.appendTo($tweetCont);
+            $message.appendTo($tweetCont);
+            $timestamp.appendTo($tweetCont);
+            $tweetCont.appendTo($twitterFeed);
+            index -= 1;
+          };
+        };
+        retrieveTweet();
+      $('body').on('click', '.username', function (event) {
+        clearInterval(intervalTimer);
+        var usernameString = $(event.target).text();
+        var username = usernameString.slice(1);
+        retrieveTweet(username);
+      });
+      $('body').on('click', '.homeButton', function (event) {
+        retrieveTweet();
+      });
+      var intervalTimer = setInterval(retrieveTweet, 3000);
+    });
+    </script>
+  </body>
+</html>
